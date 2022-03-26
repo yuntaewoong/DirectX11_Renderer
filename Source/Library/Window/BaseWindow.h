@@ -227,7 +227,7 @@ namespace library
         }
         this->m_hWnd = CreateWindowEx(0,
             pszWindowName,
-            L"Game Graphics Programming Lab 01:Direct3D 11 Basics",
+            this->GetWindowClassName(),
             WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
             CW_USEDEFAULT, 
             CW_USEDEFAULT, 
