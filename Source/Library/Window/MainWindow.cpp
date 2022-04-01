@@ -20,18 +20,25 @@ namespace library
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     HRESULT MainWindow::Initialize(_In_ HINSTANCE hInstance, _In_ INT nCmdShow, _In_ PCWSTR pszWindowName)
     {
-        HRESULT hr = BaseWindow::initialize(hInstance,
+        RECT rc = { 0, 0, 800, 600 };
+        AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+        
+        HRESULT hr = initialize(
+            hInstance,
             nCmdShow,
-            pszWindowName,
-            CS_HREDRAW | CS_VREDRAW,
-            0,
-            0,
-            800,
-            600,
-            nullptr,
+            pszWindowName, 
+            WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT,
+            rc.right - rc.left,
+            rc.bottom - rc.top,
+            nullptr, 
             nullptr
         );
-        return hr;
+        if (FAILED(hr))
+        {
+            return hr;
+        }
+
+        return S_OK;
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -44,7 +51,7 @@ namespace library
     M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
     PCWSTR MainWindow::GetWindowClassName() const
     {
-        return this->m_pszWindowName;
+        return L"MainWindow";
     }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -70,8 +77,8 @@ namespace library
         switch (uMsg)
         {
         case WM_PAINT:
-            hdc = BeginPaint(this->m_hWnd, &ps);
-            EndPaint(this->m_hWnd, &ps);
+            hdc = BeginPaint(m_hWnd, &ps);
+            EndPaint(m_hWnd, &ps);
             break;
 
         case WM_DESTROY:
@@ -82,7 +89,7 @@ namespace library
             // so we created the window without the resize border.
 
         default:
-            return DefWindowProc(this->m_hWnd, uMsg, wParam, lParam);
+            return DefWindowProc(m_hWnd, uMsg, wParam, lParam);
         }
 
         return 0;

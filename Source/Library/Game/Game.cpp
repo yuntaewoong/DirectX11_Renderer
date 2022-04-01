@@ -12,12 +12,11 @@ namespace library
 
 	  Modifies: [m_pszGameName, m_mainWindow, m_renderer].
 	M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
-	Game::Game(_In_ PCWSTR pszGameName)
-	{
-		this->m_pszGameName = pszGameName;
-		this->m_mainWindow = std::make_unique<MainWindow>();
-		this->m_renderer = std::make_unique<Renderer>();
-	}
+	Game::Game(_In_ PCWSTR pszGameName) :
+		m_pszGameName(pszGameName), 
+		m_mainWindow(std::make_unique<MainWindow>()),
+		m_renderer(std::make_unique<Renderer>())
+	{ }
 	/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
 	  Method:   Game::Initialize
 
@@ -36,12 +35,13 @@ namespace library
 	M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
 	HRESULT Game::Initialize(_In_ HINSTANCE hInstance, _In_ INT nCmdShow)
 	{
-		HRESULT hr;
-		hr = this->m_mainWindow->Initialize(hInstance, nCmdShow, this->m_pszGameName);
+		HRESULT hr = m_mainWindow->Initialize(hInstance, nCmdShow, m_pszGameName);
 		if (FAILED(hr))
 			return hr;
-		hr = this->m_renderer->Initialize(this->m_mainWindow->GetWindow());
-		return hr;
+		hr = m_renderer->Initialize(m_mainWindow->GetWindow());
+		if (FAILED(hr))
+			return hr;
+		return S_OK;
 	}
 
 	/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
@@ -64,11 +64,13 @@ namespace library
 			}
 			else
 			{
-				this->m_renderer->Render();
+				m_renderer->Render();
 			}
 		}
+
 		return static_cast<INT>(msg.wParam);
 	}
+
 	/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
 	  Method:   Game::GetGameName
 
@@ -79,7 +81,6 @@ namespace library
 	M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
 	PCWSTR Game::GetGameName() const
 	{
-		return this->m_pszGameName;
+		return m_pszGameName;
 	}
-
 }
