@@ -21,7 +21,11 @@ namespace library
         m_immediateContext1(nullptr),
         m_swapChain(nullptr),
         m_swapChain1(nullptr),
-        m_renderTargetView(nullptr)
+        m_renderTargetView(nullptr),
+        m_vertexBuffer(nullptr),
+        m_vertexLayout(nullptr),
+        m_vertexShader(nullptr),
+        m_pixelShader(nullptr)
     { }
 
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
