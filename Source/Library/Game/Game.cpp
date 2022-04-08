@@ -55,6 +55,18 @@ namespace library
 	INT Game::Run()
 	{
 		MSG msg = { 0 };
+		LARGE_INTEGER StartingTime{
+			.QuadPart = static_cast<LONGLONG>(0),
+		};
+		LARGE_INTEGER EndingTime{
+			.QuadPart = static_cast<LONGLONG>(0),
+		};
+		LARGE_INTEGER Frequency{
+			.QuadPart = static_cast<LONGLONG>(0),
+		};
+		QueryPerformanceFrequency(&Frequency);
+		QueryPerformanceCounter(&StartingTime);
+		FLOAT elapsedTime = 0.0f;
 		while (WM_QUIT != msg.message)
 		{
 			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -64,8 +76,17 @@ namespace library
 			}
 			else
 			{
+				//end timer
+				QueryPerformanceCounter(&EndingTime);
+				elapsedTime = (EndingTime.QuadPart - StartingTime.QuadPart)/ (FLOAT)Frequency.QuadPart;
+				m_renderer->Update(elapsedTime);
+				
+				//start timer
+				QueryPerformanceCounter(&StartingTime);
+				//render
 				m_renderer->Render();
 			}
+			
 		}
 
 		return static_cast<INT>(msg.wParam);
@@ -82,5 +103,30 @@ namespace library
 	PCWSTR Game::GetGameName() const
 	{
 		return m_pszGameName;
+	}
+	/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+	  Method:   Game::GetWindow
+
+	  Summary:  Returns the main window
+
+	  Returns:  std::unique_ptr<MainWindow>&
+				  The main window
+	M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+	std::unique_ptr<MainWindow>& Game::GetWindow()
+	{
+		return m_mainWindow;
+	}
+
+	/*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+	  Method:   Game::GetRenderer
+
+	  Summary:  Returns the renderer
+
+	  Returns:  std::unique_ptr<Renderer>&
+				  The renderer
+	M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+	std::unique_ptr<Renderer>& Game::GetRenderer()
+	{
+		return m_renderer;
 	}
 }
