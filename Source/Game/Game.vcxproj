@@ -99,14 +99,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Cube\BaseCube.cpp" />
+    <ClCompile Include="Cube\OriginCube.cpp" />
+    <ClCompile Include="Cube\RoamingCube.cpp" />
+    <ClCompile Include="Cube\RotateCube.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="OriginCube.cpp" />
-    <ClCompile Include="RotateCube.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube\BaseCube.h" />
-    <ClInclude Include="OriginCube.h" />
-    <ClInclude Include="RotateCube.h" />
+    <ClInclude Include="Cube\OriginCube.h" />
+    <ClInclude Include="Cube\RoamingCube.h" />
+    <ClInclude Include="Cube\RotateCube.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Shaders.fxh" />

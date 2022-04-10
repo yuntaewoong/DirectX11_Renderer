@@ -33,10 +33,13 @@
     <ClCompile Include="Cube\BaseCube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
-    <ClCompile Include="OriginCube.cpp">
+    <ClCompile Include="Cube\OriginCube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
-    <ClCompile Include="RotateCube.cpp">
+    <ClCompile Include="Cube\RoamingCube.cpp">
+      <Filter>Source Files\Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube\RotateCube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
   </ItemGroup>
@@ -57,10 +60,13 @@
     <ClInclude Include="Cube\BaseCube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
-    <ClInclude Include="RotateCube.h">
+    <ClInclude Include="Cube\OriginCube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
-    <ClInclude Include="OriginCube.h">
+    <ClInclude Include="Cube\RoamingCube.h">
+      <Filter>Header Files\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube\RotateCube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
   </ItemGroup>
