@@ -116,7 +116,6 @@ namespace library
         m_yaw += mouseRelativeMovement.X * deltaTime * m_rotationSpeed;
         m_pitch += mouseRelativeMovement.Y * deltaTime * m_rotationSpeed;
        
-        m_yaw = std::clamp(m_yaw, -XM_PIDIV2, XM_PIDIV2);//yaw range setting
         m_pitch = std::clamp(m_pitch, -XM_PIDIV2 + 0.01f, XM_PIDIV2 - 0.01f);//pitch range setting, pitch value must be in range(PI/2 > pitch > -PI/2)
     }
 
