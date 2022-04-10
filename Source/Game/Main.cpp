@@ -12,8 +12,9 @@
 #include "Common.h"
 
 #include <memory>
-#include "OriginCube.h"
-#include "RotateCube.h"
+#include "Cube/OriginCube.h"
+#include "Cube/RotateCube.h"
+#include "Cube/RoamingCube.h"
 #include "Game/Game.h"
 
 /*F+F+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -86,10 +87,22 @@ INT WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     {
         return 0;
     }
+    //add roaming cube and set shaders
+    if (FAILED(game->GetRenderer()->AddRenderable(L"RoamingCube", std::make_shared<RoamingCube>())))
+    {
+        return 0;
+    }
+    if (FAILED(game->GetRenderer()->SetVertexShaderOfRenderable(L"RoamingCube", L"MainShader")))
+    {
+        return 0;
+    }
+    if (FAILED(game->GetRenderer()->SetPixelShaderOfRenderable(L"RoamingCube", L"MainShader")))
+    {
+        return 0;
+    }
     if (FAILED(game->Initialize(hInstance, nCmdShow)))
     {
         return 0;
     }
-
     return game->Run();
 }

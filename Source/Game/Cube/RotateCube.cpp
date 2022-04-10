@@ -1,4 +1,4 @@
-#include "RotateCube.h"
+#include "Cube/RotateCube.h"
 
 RotateCube::RotateCube()
 {

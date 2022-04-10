@@ -1,4 +1,4 @@
-#include "OriginCube.h"
+#include "Cube/OriginCube.h"
 
 
 OriginCube::OriginCube()
