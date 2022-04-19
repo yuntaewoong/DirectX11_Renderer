@@ -23,7 +23,35 @@ namespace library
         m_vertexShader(nullptr),
         m_pixelShader(nullptr),
         m_textureFilePath(textureFilePath),
-        m_world(XMMATRIX())
+        m_world(XMMatrixIdentity()),
+        m_bHasTextures(TRUE),
+        m_outputColor(XMFLOAT4())
+    {}
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   Renderable::Renderable
+
+      Summary:  Constructor
+
+      Args:     const XMFLOAT4* outputColor
+                  Default color of the renderable
+
+      Modifies: [m_vertexBuffer, m_indexBuffer, m_constantBuffer,
+                 m_textureRV, m_samplerLinear, m_vertexShader,
+                 m_pixelShader, m_textureFilePath, m_outputColor,
+                 m_world].
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    Renderable::Renderable(_In_ const XMFLOAT4& outputColor) :
+        m_vertexBuffer(nullptr),
+        m_indexBuffer(nullptr),
+        m_constantBuffer(nullptr),
+        m_textureRV(nullptr),
+        m_samplerLinear(nullptr),
+        m_vertexShader(nullptr),
+        m_pixelShader(nullptr),
+        m_textureFilePath(std::filesystem::path()),
+        m_world(XMMatrixIdentity()),
+        m_bHasTextures(FALSE),
+        m_outputColor(outputColor)
     {}
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::initialize
@@ -93,14 +121,17 @@ namespace library
             return hr;
         }
         //Create texture
-        hr = CreateDDSTextureFromFile(
-            pDevice,
-            m_textureFilePath.filename().wstring().c_str(),
-            nullptr,
-            m_textureRV.GetAddressOf()
-        );
-        if (FAILED(hr))
-            return hr;
+        if (m_bHasTextures)
+        {
+            hr = CreateDDSTextureFromFile(
+                pDevice,
+                m_textureFilePath.filename().wstring().c_str(),
+                nullptr,
+                m_textureRV.GetAddressOf()
+            );
+            if (FAILED(hr))
+                return hr;
+        }
         // Create the sample state
         D3D11_SAMPLER_DESC sampDesc = {
                 .Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR,
@@ -118,7 +149,7 @@ namespace library
         if (FAILED(hr))
             return hr;
 
-        m_world = DirectX::XMMatrixIdentity();
+        //m_world = DirectX::XMMatrixIdentity();
         return S_OK;
     }
 
@@ -268,5 +299,60 @@ namespace library
     ComPtr<ID3D11SamplerState>& Renderable::GetSamplerState()
     {
         return m_samplerLinear;
+    }
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   Renderable::GetOutputColor
+
+      Summary:  Returns the output color
+
+      Returns:  const XMFLOAT4&
+                  The output color
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    const XMFLOAT4& Renderable::GetOutputColor() const
+    {
+        return m_outputColor;
+    }
+
+    /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
+      Method:   Renderable::HasTexture
+
+      Summary:  Returns whether the renderable has texture
+
+      Returns:  BOOL
+                  Whether the renderable has texture
+    M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M---M-M*/
+    BOOL Renderable::HasTexture() const
+    {
+        return m_bHasTextures;
+    }
+    void Renderable::RotateX(_In_ FLOAT angle)
+    {
+        XMMATRIX mRotateX = XMMatrixRotationX(angle);
+        m_world = mRotateX * m_world;
+    }
+    void Renderable::RotateY(_In_ FLOAT angle)
+    {
+        XMMATRIX mRotateY = XMMatrixRotationY(angle);
+        m_world = mRotateY * m_world;
+    }
+    void Renderable::RotateZ(_In_ FLOAT angle)
+    {
+        XMMATRIX mRotateZ = XMMatrixRotationZ(angle);
+        m_world = mRotateZ * m_world;
+    }
+    void Renderable::RotateRollPitchYaw(_In_ FLOAT roll, _In_ FLOAT pitch, _In_ FLOAT yaw)
+    {
+        XMMATRIX mRotateRollPitchYaw = XMMatrixRotationRollPitchYaw(roll, pitch, yaw);
+        m_world = mRotateRollPitchYaw * m_world;
+    }
+    void Renderable::Scale(_In_ FLOAT scaleX, _In_ FLOAT scaleY, _In_ FLOAT scaleZ)
+    {
+        XMMATRIX mScale = XMMatrixScaling(scaleX,scaleY,scaleZ);
+        m_world = mScale * m_world;
+    }
+    void Renderable::Translate(_In_ const XMVECTOR& offset)
+    {
+        XMMATRIX mTranslate = XMMatrixTranslationFromVector(offset);
+        m_world = mTranslate * m_world;
     }
 }

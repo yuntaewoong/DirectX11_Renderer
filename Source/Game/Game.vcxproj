@@ -100,14 +100,15 @@
   <ItemGroup>
     <ClCompile Include="Cube\BaseCube.cpp" />
     <ClCompile Include="Cube\Cube.cpp" />
+    <ClCompile Include="Cube\RotatingCube.cpp" />
+    <ClCompile Include="Light\RotatingPointLight.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube\BaseCube.h" />
     <ClInclude Include="Cube\Cube.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\Shaders.fxh" />
+    <ClInclude Include="Cube\RotatingCube.h" />
+    <ClInclude Include="Light\RotatingPointLight.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\PS.hlsl" />
@@ -116,6 +117,9 @@
   <ItemGroup>
     <Image Include="seafloor.dds" />
     <Image Include="strange.dds" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\PhongShaders.fxh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

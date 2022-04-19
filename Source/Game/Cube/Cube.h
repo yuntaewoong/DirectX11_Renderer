@@ -30,24 +30,13 @@ C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 class Cube : public BaseCube
 {
 public:
-    Cube(const std::filesystem::path& textureFilePath);
+    Cube(_In_ const std::filesystem::path& textureFilePath);
+    Cube(_In_ const XMFLOAT4& outputColor);
     Cube(const Cube& other) = delete;
     Cube(Cube&& other) = delete;
     Cube& operator=(const Cube& other) = delete;
     Cube& operator=(Cube&& other) = delete;
     ~Cube() = default;
-
-    virtual void Update(_In_ FLOAT deltaTime) override;
-};
-class CustomCube : public BaseCube
-{
-public:
-    CustomCube(const std::filesystem::path& textureFilePath);
-    CustomCube(const CustomCube& other) = delete;
-    CustomCube(CustomCube&& other) = delete;
-    CustomCube& operator=(const CustomCube& other) = delete;
-    CustomCube& operator=(CustomCube&& other) = delete;
-    ~CustomCube() = default;
 
     virtual void Update(_In_ FLOAT deltaTime) override;
 };
