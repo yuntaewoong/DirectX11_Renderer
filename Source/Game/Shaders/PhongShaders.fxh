@@ -107,7 +107,7 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
     output.TexCoord = input.TexCoord;
-    output.Normal = mul(float4(input.Normal, 1), World).xyz;
+    output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
     output.WorldPosition = mul(input.Position, World);
     return output;
 }
@@ -126,7 +126,7 @@ PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
 //--------------------------------------------------------------------------------------
 float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 {
-    float3 diffuse = 0.0f;
+    float3 diffuse = float3(0.0f, 0.0f, 0.0f);
     float3 ambience = float3(0.05f, 0.05f, 0.05f);
     float3 ambient = float3(0.0f, 0.0f, 0.0f);
     float3 specullar = float3(0.0f, 0.0f, 0.0f);
@@ -139,7 +139,7 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
         
         float3 lightDirection = normalize(input.WorldPosition - LightPositions[i].xyz);
         float lambertianTerm = dot(normalize(input.Normal), -lightDirection);
-        diffuse += max(lambertianTerm, 0.0f) //cos 
+        diffuse += max(lambertianTerm, 0.0f)//cos 
         * txDiffuse.Sample(samLinear, input.TexCoord).xyz //color sampled from texture;
         * LightColors[i].xyz; //light color
         
@@ -147,7 +147,6 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
         specullar += pow(max(dot(-viewDirection, reflectDirection), 0.0f), 15.0f) * LightColors[i].xyz
             * txDiffuse.Sample(samLinear, input.TexCoord).rgb;
     }
-    
     return float4(saturate(diffuse+specullar+ambient), 1);
 }
 
