@@ -55,6 +55,12 @@
     <Filter Include="Source Files\Light">
       <UniqueIdentifier>{a57bb00d-3f85-4349-8ced-cbe5d877d2f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Model">
+      <UniqueIdentifier>{91eb1b81-0810-4adf-8afd-8c4b77d8175c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Model">
+      <UniqueIdentifier>{aef38d94-762f-4673-a41c-b57c9b3983ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Game.h">
@@ -81,23 +87,32 @@
     <ClInclude Include="Camera\Camera.h">
       <Filter>Header Files\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Texture\DDSTextureLoader.h">
-      <Filter>Header Files\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Light\PointLight.h">
       <Filter>Header Files\Light</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\DataTypes.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\Renderer.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Model.h">
+      <Filter>Header Files\Model</Filter>
+    </ClInclude>
     <ClInclude Include="Renderer\Renderable.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\Renderer.h">
-      <Filter>Header Files\Renderer</Filter>
+    <ClInclude Include="Texture\Material.h">
+      <Filter>Header Files\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture\Texture.h">
+      <Filter>Header Files\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture\WICTextureLoader.h">
+      <Filter>Header Files\Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -108,9 +123,6 @@
       <Filter>Source Files\Window</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Renderer.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\Renderable.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Shader\PixelShader.cpp">
@@ -125,11 +137,23 @@
     <ClCompile Include="Camera\Camera.cpp">
       <Filter>Source Files\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Texture\DDSTextureLoader.cpp">
-      <Filter>Source Files\Texture</Filter>
-    </ClCompile>
     <ClCompile Include="Light\PointLight.cpp">
       <Filter>Source Files\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Model.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Renderable.cpp">
+      <Filter>Source Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture\Material.cpp">
+      <Filter>Source Files\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture\Texture.cpp">
+      <Filter>Source Files\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture\WICTextureLoader.cpp">
+      <Filter>Source Files\Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

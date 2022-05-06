@@ -127,7 +127,7 @@ PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
 float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 {
     float3 diffuse = float3(0.0f, 0.0f, 0.0f);
-    float3 ambience = float3(0.05f, 0.05f, 0.05f);
+    float3 ambience = float3(0.1f, 0.1f, 0.1f);
     float3 ambient = float3(0.0f, 0.0f, 0.0f);
     float3 specullar = float3(0.0f, 0.0f, 0.0f);
     float3 viewDirection = normalize(input.WorldPosition - CameraPosition.xyz);
@@ -144,8 +144,7 @@ float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
         * LightColors[i].xyz; //light color
         
         float3 reflectDirection = normalize(reflect(lightDirection, input.Normal));
-        specullar += pow(max(dot(-viewDirection, reflectDirection), 0.0f), 15.0f) * LightColors[i].xyz
-            * txDiffuse.Sample(samLinear, input.TexCoord).rgb;
+        specullar += pow(max(dot(-viewDirection, reflectDirection), 0.0f), 15.0f) * LightColors[i].xyz;
     }
     return float4(saturate(diffuse+specullar+ambient), 1);
 }

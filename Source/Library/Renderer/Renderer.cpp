@@ -520,7 +520,7 @@ namespace library
                 0,
                 0
             );
-            
+
             m_immediateContext->VSSetShader(iRenderable->second->GetVertexShader().Get(), nullptr, 0);
             m_immediateContext->VSSetConstantBuffers(0, 1, m_camera.GetConstantBuffer().GetAddressOf());
             m_immediateContext->VSSetConstantBuffers(1, 1, m_cbChangeOnResize.GetAddressOf());
@@ -531,11 +531,19 @@ namespace library
             m_immediateContext->PSSetShader(iRenderable->second->GetPixelShader().Get(), nullptr, 0);
             if (iRenderable->second->HasTexture())
             {
-                m_immediateContext->PSSetShaderResources(0, 1, iRenderable->second->GetTextureResourceView().GetAddressOf());
-                m_immediateContext->PSSetSamplers(0, 1, iRenderable->second->GetSamplerState().GetAddressOf());
+                for (UINT i = 0; i < iRenderable->second->GetNumMeshes(); i++)
+                {
+                    UINT materialIndex = iRenderable->second->GetMesh(i).uMaterialIndex;
+                    m_immediateContext->PSSetShaderResources(0, 1, iRenderable->second->GetMaterial(materialIndex).pDiffuse->GetTextureResourceView().GetAddressOf());
+                    m_immediateContext->PSSetSamplers(0, 1, iRenderable->second->GetMaterial(materialIndex).pDiffuse->GetSamplerState().GetAddressOf());
+                    m_immediateContext->DrawIndexed(iRenderable->second->GetMesh(i).uNumIndices, iRenderable->second->GetMesh(i).uBaseIndex, iRenderable->second->GetMesh(i).uBaseVertex);
+                }
             }
-            //render
-            m_immediateContext->DrawIndexed(iRenderable->second->GetNumIndices(), 0, 0);
+            else
+            {
+                m_immediateContext->DrawIndexed(iRenderable->second->GetNumIndices(), 0, 0);
+            }
+            
         }
         // Present the information rendered to the back buffer to the front buffer (the screen)
         m_swapChain->Present(0, 0);
