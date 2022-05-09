@@ -13,23 +13,20 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Shaders">
-      <UniqueIdentifier>{a824dfdf-6e48-477c-b083-e6f42120e095}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Cube">
       <UniqueIdentifier>{6971d719-f2ab-41c2-b7ff-be71ca7f3e6b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Cube">
       <UniqueIdentifier>{7c827071-cdd2-4119-83d0-bebebe69fd2a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Shaders">
-      <UniqueIdentifier>{bba98a27-ca72-4159-9c73-4b3dcfcce419}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Light">
       <UniqueIdentifier>{1fe6cf1e-4499-44cb-9711-28620b64c8f7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Light">
       <UniqueIdentifier>{2345006a-379a-4bdf-ad83-45736a907954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{7621dcef-c505-4d68-a174-12d5240587ef}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,14 +45,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Shaders\PS.hlsl">
-      <Filter>Source Files\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Shaders\VS.hlsl">
-      <Filter>Source Files\Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Light\RotatingPointLight.h">
@@ -80,8 +69,19 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\PhongShaders.fxh">
-      <Filter>Header Files\Shaders</Filter>
+    <None Include="Shaders\VoxelShaders.fxh">
+      <Filter>Shader</Filter>
     </None>
+    <None Include="Shaders\PhongShaders.fxh">
+      <Filter>Shader</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\VS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

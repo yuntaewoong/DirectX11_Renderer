@@ -111,15 +111,16 @@
     <ClInclude Include="Light\RotatingPointLight.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\PS.hlsl" />
-    <FxCompile Include="Shaders\VS.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="seafloor.dds" />
     <Image Include="strange.dds" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\PhongShaders.fxh" />
+    <None Include="Shaders\VoxelShaders.fxh" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\PS.hlsl" />
+    <FxCompile Include="Shaders\VS.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
