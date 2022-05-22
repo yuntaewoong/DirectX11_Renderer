@@ -75,6 +75,9 @@
     <None Include="Shaders\PhongShaders.fxh">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shaders\SkinningShaders.fxh">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\PS.hlsl">
