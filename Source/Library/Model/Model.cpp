@@ -791,8 +791,8 @@ namespace library
             outScale = ConvertVector3dToFloat3(pNodeAnim->mScalingKeys[0].mValue);
             return;
         }
-
-        UINT uScalingIndex = findRotation(animationTimeTicks, pNodeAnim);
+        
+        UINT uScalingIndex = findScaling(animationTimeTicks, pNodeAnim);;
         UINT uNextScalingIndex = uScalingIndex + 1u;
         assert(uNextScalingIndex < pNodeAnim->mNumScalingKeys);
 
