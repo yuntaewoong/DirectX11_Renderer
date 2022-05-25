@@ -9,8 +9,8 @@
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
-Texture2D txDiffuse : register(t0);
-SamplerState samLinear : register(s0);
+Texture2D textures[2] : register(t0);
+SamplerState sampleStates[2] : register(s0);
 
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
@@ -45,6 +45,7 @@ cbuffer cbChangesEveryFrame : register(b2)
 {
     matrix World;
     float4 OutputColor;
+    bool HasNormalMap;
 }
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -69,6 +70,8 @@ struct VS_PHONG_INPUT
     float4 Position : POSITION;
     float2 TexCoord : TEXCOORD0;
     float3 Normal : NORMAL;
+    float3 Tangent : TANGENT;
+    float3 Bitangent : BITANGENT;
 };
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -83,7 +86,8 @@ struct PS_PHONG_INPUT
     float2 TexCoord : TEXCOORD0;
     float3 Normal : NORMAL;
     float3 WorldPosition : WORLDPOS;
-    
+    float3 Tangent : TANGENT;
+    float3 Bitangent : BITANGENT;
 };
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
@@ -109,6 +113,12 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
     output.TexCoord = input.TexCoord;
     output.Normal = normalize(mul(float4(input.Normal, 0), World).xyz);
     output.WorldPosition = mul(input.Position, World);
+    if (HasNormalMap)
+    {
+        output.Tangent = normalize(mul(float4(input.Tangent, 0), World).xyz);
+        output.Bitangent = normalize(mul(float4(input.Bitangent, 0), World).xyz);
+    }
+    
     return output;
 }
 
@@ -126,24 +136,36 @@ PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
 //--------------------------------------------------------------------------------------
 float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 {
+    float3 normal = normalize(input.Normal);
+    if (HasNormalMap)
+    {
+        float3 normalSample = textures[1].Sample(sampleStates[1], input.TexCoord).xyz;
+        normalSample = (normalSample * 2.0f) - 1.0f;
+        normalSample = (normalSample.x * input.Tangent) + (normalSample.y * input.Bitangent) + (normalSample.z * normal);
+        normalSample = normalize(normalSample);
+        normal = normalSample;
+    }
+    
+    
+    
     float3 diffuse = float3(0.0f, 0.0f, 0.0f);
-    float3 ambience = float3(0.1f, 0.1f, 0.1f);
+    float3 ambience = float3(0.0f, 0.0f, 0.0f);
     float3 ambient = float3(0.0f, 0.0f, 0.0f);
     float3 specullar = float3(0.0f, 0.0f, 0.0f);
     float3 viewDirection = normalize(input.WorldPosition - CameraPosition.xyz);
     for (uint i = 0; i < NUM_LIGHTS; ++i)
     {
         ambient += ambience * // ambience term
-        txDiffuse.Sample(samLinear, input.TexCoord).rgb * //color sampled frome texture
+        textures[0].Sample(sampleStates[0], input.TexCoord).rgb * //color sampled frome texture
         LightColors[i].xyz; //color of light
         
         float3 lightDirection = normalize(input.WorldPosition - LightPositions[i].xyz);
-        float lambertianTerm = dot(normalize(input.Normal), -lightDirection);
+        float lambertianTerm = dot(normalize(normal), -lightDirection);
         diffuse += max(lambertianTerm, 0.0f)//cos 
-        * txDiffuse.Sample(samLinear, input.TexCoord).xyz //color sampled from texture;
+        * textures[0].Sample(sampleStates[0], input.TexCoord).xyz //color sampled from texture;
         * LightColors[i].xyz; //light color
         
-        float3 reflectDirection = normalize(reflect(lightDirection, input.Normal));
+        float3 reflectDirection = normalize(reflect(lightDirection, normal));
         specullar += pow(max(dot(-viewDirection, reflectDirection), 0.0f), 15.0f) * LightColors[i].xyz;
     }
     return float4(saturate(diffuse+specullar+ambient), 1);
