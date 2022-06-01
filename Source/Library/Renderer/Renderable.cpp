@@ -92,7 +92,7 @@ namespace library
         hr = pDevice->CreateBuffer(&indexBd, &indexInitData, m_indexBuffer.GetAddressOf());
         if (FAILED(hr))
             return hr;
-        if (HasTexture() && m_aNormalData.empty())
+        if (m_aNormalData.empty())
         {
             calculateNormalMapVectors();
         }

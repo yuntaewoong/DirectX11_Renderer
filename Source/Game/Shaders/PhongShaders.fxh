@@ -1,23 +1,24 @@
 //--------------------------------------------------------------------------------------
 // File: PhongShaders.fx
 //
-// Copyright (c) Kyung Hee University.
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License (MIT).
 //--------------------------------------------------------------------------------------
-
-#define NUM_LIGHTS (2)
-
-//--------------------------------------------------------------------------------------
-// Global Variables
-//--------------------------------------------------------------------------------------
-Texture2D textures[2] : register(t0);
-SamplerState sampleStates[2] : register(s0);
 
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
+#define NUM_LIGHTS (1)
+#define NEAR_PLANE (0.01f)
+#define FAR_PLANE (1000.0f)
+
+Texture2D aTextures[2] : register(t0);
+SamplerState aSamplers[2] : register(s0);
+
+Texture2D shadowMapTexture : register(t2);
+SamplerState shadowMapSampler : register(s2);
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Cbuffer:  cbChangeOnCameraMovement
-
   Summary:  Constant buffer used for view transformation and shading
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 cbuffer cbChangeOnCameraMovement : register(b0)
@@ -28,7 +29,6 @@ cbuffer cbChangeOnCameraMovement : register(b0)
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Cbuffer:  cbChangeOnResize
-
   Summary:  Constant buffer used for projection transformation
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 cbuffer cbChangeOnResize : register(b1)
@@ -38,7 +38,6 @@ cbuffer cbChangeOnResize : register(b1)
 
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Cbuffer:  cbChangesEveryFrame
-
   Summary:  Constant buffer used for world transformation
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 cbuffer cbChangesEveryFrame : register(b2)
@@ -48,21 +47,16 @@ cbuffer cbChangesEveryFrame : register(b2)
     bool HasNormalMap;
 }
 
-/*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
-  Cbuffer:  cbLights
-
-  Summary:  Constant buffer used for shading
-C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 cbuffer cbLights : register(b3)
 {
     float4 LightPositions[NUM_LIGHTS];
     float4 LightColors[NUM_LIGHTS];
-}
+	matrix LightViews[NUM_LIGHTS];
+	matrix LightProjections[NUM_LIGHTS];
+};
 
-//--------------------------------------------------------------------------------------
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Struct:   VS_PHONG_INPUT
-
   Summary:  Used as the input to the vertex shader
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 struct VS_PHONG_INPUT
@@ -74,12 +68,6 @@ struct VS_PHONG_INPUT
     float3 Bitangent : BITANGENT;
 };
 
-/*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
-  Struct:   PS_PHONG_INPUT
-
-  Summary:  Used as the input to the pixel shader, output of the 
-            vertex shader
-C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
 struct PS_PHONG_INPUT
 {
     float4 Position : SV_POSITION;
@@ -88,11 +76,10 @@ struct PS_PHONG_INPUT
     float3 WorldPosition : WORLDPOS;
     float3 Tangent : TANGENT;
     float3 Bitangent : BITANGENT;
+    float4 LightViewPosition : TEXCOORD1;
 };
-
 /*C+C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C+++C
   Struct:   PS_LIGHT_CUBE_INPUT
-
   Summary:  Used as the input to the pixel shader, output of the 
             vertex shader
 C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C---C-C*/
@@ -106,7 +93,13 @@ struct PS_LIGHT_CUBE_INPUT
 //--------------------------------------------------------------------------------------
 PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
 {
-    PS_PHONG_INPUT output = (PS_PHONG_INPUT)0;
+    PS_PHONG_INPUT output;
+    //shadow
+    output.LightViewPosition = mul(input.Position, World);
+    output.LightViewPosition = mul(output.LightViewPosition, LightViews[0]);
+    output.LightViewPosition = mul(output.LightViewPosition, LightProjections[0]);
+    
+    //phong
     output.Position = mul(input.Position, World);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
@@ -121,14 +114,18 @@ PS_PHONG_INPUT VSPhong(VS_PHONG_INPUT input)
     
     return output;
 }
-
 PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
 {
-    PS_LIGHT_CUBE_INPUT output = (PS_LIGHT_CUBE_INPUT)0;
+    PS_LIGHT_CUBE_INPUT output = (PS_LIGHT_CUBE_INPUT) 0;
     output.Position = mul(input.Position, World);
     output.Position = mul(output.Position, View);
     output.Position = mul(output.Position, Projection);
     return output;
+}
+float LinearizeDepth(float depth)
+{
+    float z = depth * 2.0 - 1.0;
+    return ((2.0 * NEAR_PLANE * FAR_PLANE) / (FAR_PLANE + NEAR_PLANE - z * (FAR_PLANE - NEAR_PLANE))) / FAR_PLANE;
 }
 
 //--------------------------------------------------------------------------------------
@@ -136,41 +133,55 @@ PS_LIGHT_CUBE_INPUT VSLightCube(VS_PHONG_INPUT input)
 //--------------------------------------------------------------------------------------
 float4 PSPhong(PS_PHONG_INPUT input) : SV_Target
 {
+    //shadow
+    float4 color = aTextures[0].Sample(aSamplers[0], input.TexCoord);
+    float3 ambient = float3(0.1f, 0.1f, 0.1f) * color.rgb;
+    float2 depthTexCoord;
+    depthTexCoord.x = input.LightViewPosition.x / input.LightViewPosition.w / 2.0f + 0.5f;
+    depthTexCoord.y = -input.LightViewPosition.y / input.LightViewPosition.w / 2.0f + 0.5f;
+    float closestDepth = shadowMapTexture.Sample(shadowMapSampler, depthTexCoord).r;
+    float currentDepth = input.LightViewPosition.z / input.LightViewPosition.w;
+    closestDepth = LinearizeDepth(closestDepth);
+    currentDepth = LinearizeDepth(currentDepth);
+    
+    
+    if (currentDepth > closestDepth + 0.001f)
+        return float4(ambient, 1.0f);
+    
+    //Phong
     float3 normal = normalize(input.Normal);
     if (HasNormalMap)
     {
-        float3 normalSample = textures[1].Sample(sampleStates[1], input.TexCoord).xyz;
+        float3 normalSample = aTextures[1].Sample(aSamplers[1], input.TexCoord).xyz;
         normalSample = (normalSample * 2.0f) - 1.0f;
         normalSample = (normalSample.x * input.Tangent) + (normalSample.y * input.Bitangent) + (normalSample.z * normal);
         normalSample = normalize(normalSample);
         normal = normalSample;
     }
     
-    
-    
     float3 diffuse = float3(0.0f, 0.0f, 0.0f);
-    float3 ambience = float3(0.0f, 0.0f, 0.0f);
-    float3 ambient = float3(0.0f, 0.0f, 0.0f);
+    float3 ambience = float3(0.1f, 0.1f, 0.1f);
+    ambient = float3(0.0f, 0.0f, 0.0f);
     float3 specullar = float3(0.0f, 0.0f, 0.0f);
     float3 viewDirection = normalize(input.WorldPosition - CameraPosition.xyz);
     for (uint i = 0; i < NUM_LIGHTS; ++i)
     {
         ambient += ambience * // ambience term
-        textures[0].Sample(sampleStates[0], input.TexCoord).rgb * //color sampled frome texture
+        aTextures[0].Sample(aSamplers[0], input.TexCoord).rgb * //color sampled frome texture
         LightColors[i].xyz; //color of light
         
         float3 lightDirection = normalize(input.WorldPosition - LightPositions[i].xyz);
         float lambertianTerm = dot(normalize(normal), -lightDirection);
-        diffuse += max(lambertianTerm, 0.0f)//cos 
-        * textures[0].Sample(sampleStates[0], input.TexCoord).xyz //color sampled from texture;
+        diffuse += max(lambertianTerm, 0.0f) //cos 
+        * aTextures[0].Sample(aSamplers[0], input.TexCoord).xyz //color sampled from texture;
         * LightColors[i].xyz; //light color
         
         float3 reflectDirection = normalize(reflect(lightDirection, normal));
         specullar += pow(max(dot(-viewDirection, reflectDirection), 0.0f), 15.0f) * LightColors[i].xyz;
     }
-    return float4(saturate(diffuse+specullar+ambient), 1);
+    return float4(saturate(diffuse + specullar + ambient), 1);
+    
 }
-
 float4 PSLightCube(PS_LIGHT_CUBE_INPUT input) : SV_Target
 {
     return OutputColor;

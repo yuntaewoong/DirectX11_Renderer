@@ -30,13 +30,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Light\RotatingPointLight.cpp">
-      <Filter>Source Files\Light</Filter>
-    </ClCompile>
     <ClCompile Include="Cube\BaseCube.cpp">
-      <Filter>Source Files\Cube</Filter>
-    </ClCompile>
-    <ClCompile Include="Cube\Cube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
     <ClCompile Include="Cube\RotatingCube.cpp">
@@ -44,6 +38,12 @@
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Light\RotatingPointLight.cpp">
+      <Filter>Source Files\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube\Cube.cpp">
+      <Filter>Source Files\Cube</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -53,10 +53,10 @@
     <ClInclude Include="Cube\BaseCube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
-    <ClInclude Include="Cube\Cube.h">
+    <ClInclude Include="Cube\RotatingCube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
-    <ClInclude Include="Cube\RotatingCube.h">
+    <ClInclude Include="Cube\Cube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
   </ItemGroup>
@@ -72,10 +72,13 @@
     <None Include="Shaders\VoxelShaders.fxh">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\PhongShaders.fxh">
+    <None Include="Shaders\SkinningShaders.fxh">
       <Filter>Shader</Filter>
     </None>
-    <None Include="Shaders\SkinningShaders.fxh">
+    <None Include="Shaders\ShadowShaders.fxh">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\PhongShaders.fxh">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
