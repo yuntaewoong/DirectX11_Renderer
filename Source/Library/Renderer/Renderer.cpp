@@ -522,8 +522,8 @@ namespace library
                         m_immediateContext->PSSetSamplers(0, 1, iRenderable->second->GetMaterial(materialIndex)->pDiffuse->GetSamplerState().GetAddressOf());
                         if (iRenderable->second->HasNormalMap())
                         {
-                            m_immediateContext->PSSetShaderResources(1, 1, iRenderable->second->GetMaterial(materialIndex)->pDiffuse->GetTextureResourceView().GetAddressOf());
-                            m_immediateContext->PSSetSamplers(1, 1, iRenderable->second->GetMaterial(materialIndex)->pDiffuse->GetSamplerState().GetAddressOf());
+                            m_immediateContext->PSSetShaderResources(1, 1, iRenderable->second->GetMaterial(materialIndex)->pNormal->GetTextureResourceView().GetAddressOf());
+                            m_immediateContext->PSSetSamplers(1, 1, iRenderable->second->GetMaterial(materialIndex)->pNormal->GetSamplerState().GetAddressOf());
                         }
                         m_immediateContext->DrawIndexed(iRenderable->second->GetMesh(i).uNumIndices, iRenderable->second->GetMesh(i).uBaseIndex, iRenderable->second->GetMesh(i).uBaseVertex);
                     }
