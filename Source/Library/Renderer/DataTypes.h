@@ -4,7 +4,7 @@
 
 namespace library
 {
-#define NUM_LIGHTS (1)
+#define NUM_LIGHTS (2)
 #define MAX_NUM_BONES (256)
 #define MAX_NUM_BONES_PER_VERTEX (16)
 
@@ -30,6 +30,12 @@ namespace library
 		XMFLOAT3 Tangent;
 		XMFLOAT3 Bitangent;
 	};
+	struct PointLightData
+	{
+		XMFLOAT4 Position;
+		XMFLOAT4 Color;
+		XMFLOAT4 AttenuationDistance;
+	};
 	struct CBChangeOnCameraMovement
 	{
 		XMMATRIX View;
@@ -52,13 +58,9 @@ namespace library
 	{
 		XMMATRIX BoneTransforms[MAX_NUM_BONES];
 	};
-
 	struct CBLights
 	{
-		XMFLOAT4 LightPositions[NUM_LIGHTS];
-		XMFLOAT4 LightColors[NUM_LIGHTS];
-		XMMATRIX LightViews[NUM_LIGHTS];
-		XMMATRIX LightProjections[NUM_LIGHTS];
+		PointLightData PointLights[NUM_LIGHTS];
 	};
 
 	struct CBShadowMatrix

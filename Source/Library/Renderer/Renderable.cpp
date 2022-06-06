@@ -34,7 +34,7 @@ namespace library
         m_outputColor(outputColor),
         m_padding(),
         m_world(XMMatrixIdentity()),
-        m_bHasNormalMap((BOOL)false)
+        m_bHasNormalMap(false)
     {}
 
 
@@ -429,7 +429,6 @@ namespace library
         XMMATRIX mTranslate = XMMatrixTranslationFromVector(offset);
         m_world = mTranslate * m_world;
     }
-
     /*M+M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M+++M
       Method:   Renderable::GetNumMeshes
       Summary:  Returns the number of meshes
